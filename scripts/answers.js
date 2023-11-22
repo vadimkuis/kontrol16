@@ -4,12 +4,15 @@
             questionTitleElement: null,
             currentQuestionIndex: 1,
             quiz: null,
-            right: null,
+            correctAnswers: null,
+            userResults: null,
             init() {
                 const url = new URL(location.href);
                 const testId = url.searchParams.get('testId');
-                const results = url.searchParams.get('results').split(',');
-                if (testId) {
+                this.userResults = url.searchParams.get('results').split(',').map((item) => +item);
+
+                if (testId) {// тут вобще с разбора не понял как делать
+                if (testId) {// 2 отдельных метода сделать
                     const xhr = new XMLHttpRequest();
                     xhr.open('GET', 'https://testologia.site/get-quiz?id=' + testId, false);
                     xhr.send();
@@ -32,7 +35,6 @@
                 this.optionsElement = document.getElementById('answers');
 
                 const url = new URL(location.href);
-                const results = url.searchParams.get('results').split(',');
 
                 this.quiz.questions.forEach(question => {
                     const optionElement = document.createElement('div');
@@ -70,45 +72,19 @@
                     this.optionsElement.appendChild(optionElement);
                 })
 
-                const that = this;
-                let optionElementsId = Array.from(document.getElementsByClassName('option-answer'));
+                console.log(this.correctAnswers);
+                console.log(this.userResults);
 
-                const arr = [];
-
-                for (let i = 0; i < results.length; i++) {
-                    if (results[i] === '') {
-                        arr.push(i);
-                    }
-                }
-                console.log(that.right);
-                console.log(results);
-
-                for (let a = 0; a < that.right.length; a++) {
-
-                    arr.forEach(i => {
-                        const res = that.right[i];
-
-                        optionElementsId.forEach(optionEl => {
-
-                            if (Number(results[a]) === Number(optionEl.id)) {
-                                if (Number(results[a]) === Number(that.right[a])) {
-                                    optionEl.parentElement.className = 'answer-question-option';
-                                    optionEl.parentElement.className = 'correct';
-                                }
-                                if (Number(results[a]) !== Number(that.right[a])) {
-                                    optionEl.parentElement.className = 'answer-question-option';
-                                    optionEl.parentElement.className = 'wrong';
-                                }
-                            }
-                            if (Number(optionEl.id) === Number(res)) {
-                                optionEl.parentElement.className = 'answer-question-option';
-                                optionEl.parentElement.classList.remove('wrong');
-                                optionEl.parentElement.classList.remove('correct');
-
-                            }
-                        });
+                this.quiz.questions.forEach(question => {
+                    question.answers.forEach(answer => {
+                        document.getElementById(answer.id);
+                        const isUserChoice = userResults.answer.id ? 'true' : 'false'; // тут ошибки
+                        const isCorrectAnswer = correctAnswers.answer.id ? 'true' : 'false';
+                        if (isUserChoice) {
+                            element.classList.add(isCorrectAnswer ? 'correct' : 'wrong');
+                        }
                     })
-                }
+                })
             },
         }
         Answers.init();
