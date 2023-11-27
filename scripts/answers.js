@@ -16,6 +16,7 @@
                 this.getCorrectAnswers(testId);
             }
             this.showQuiz();
+            this.checkQuiz();
         },
         getQuiz(testId) {
             const url = `https://testologia.site/get-quiz?id=${testId}`;
@@ -28,9 +29,9 @@
         },
         getCorrectAnswers(testId) {
             const url = `https://testologia.site/get-quiz-right?id=${testId}`;
-            this.correctAnswers = JSON.parse(this.doRequest(url))
+            const response = this.doRequest(url)
             try {
-                this.right = JSON.parse(testId) || null;
+                this.correctAnswers = JSON.parse(response) || null;
             } catch (error) {
                 console.error(error);
             }
@@ -47,8 +48,7 @@
             document.getElementById('pre-title').innerText = this.quiz.name;
             this.optionsElement = document.getElementById('answers');
 
-            const url = new URL(location.href);
-            this.quiz.questions.forEach((question, idx) => {
+            this.quiz.questions.forEach(question => {
                 const optionElement = document.createElement('div');
                 optionElement.className = 'answers-question-options';
 
@@ -77,21 +77,27 @@
                     labelElement.setAttribute('for', inputId);
                     labelElement.innerText = answer.answer;
 
-                    if (this.userResults[idx] === inputId) {
-                        inputElement.setAttribute('style', 'border: 6px solid #dc3333');
-                        labelElement.setAttribute('style', 'color: #dc3333');
-                    }
-                    if(this.userResults[idx] === inputId && this.correctAnswers[idx] === inputId){
-                        inputElement.setAttribute('style', 'border: 6px solid #5fdc33');
-                        labelElement.setAttribute('style', 'color: #5fdc33');
-                    }
                     answerItem.appendChild(inputElement);
                     answerItem.appendChild(labelElement);
                     optionElement.appendChild(answerItem);
                 })
-
                 this.optionsElement.appendChild(optionElement);
             })
+        },
+        checkQuiz(inputId) {
+            this.quiz.questions.forEach(question => {
+                question.answers.forEach(answer => {
+
+                    if (this.userResults === inputId) {
+                        inputElement.setAttribute('style', 'border: 6px solid #dc3333');
+                        labelElement.setAttribute('style', 'color: #dc3333');
+                    }
+                    if (this.userResults === inputId && this.correctAnswers === inputId) {
+                        inputElement.setAttribute('style', 'border: 6px solid #5fdc33');
+                        labelElement.setAttribute('style', 'color: #5fdc33');
+                    }
+                });
+            });
         },
     }
     Answers.init();
