@@ -43,6 +43,7 @@
             if (xhr.status === 200 && xhr.responseText) {
                 return xhr.responseText;
             }
+            return null;
         },
         showQuiz() {
             document.getElementById('pre-title').innerText = this.quiz.name;
@@ -84,17 +85,16 @@
                 this.optionsElement.appendChild(optionElement);
             })
         },
-        checkQuiz(inputId) {
+        checkQuiz() {
             this.quiz.questions.forEach(question => {
                 question.answers.forEach(answer => {
 
-                    if (this.userResults === inputId) {
-                        inputElement.setAttribute('style', 'border: 6px solid #dc3333');
-                        labelElement.setAttribute('style', 'color: #dc3333');
-                    }
-                    if (this.userResults === inputId && this.correctAnswers === inputId) {
-                        inputElement.setAttribute('style', 'border: 6px solid #5fdc33');
-                        labelElement.setAttribute('style', 'color: #5fdc33');
+                    const element = document.getElementById(answer.id);
+                    const isUserChoice = this.userResults.includes(answer.id);
+                    const isCorrectAnswer = this.correctAnswers.includes(answer.id);
+
+                    if (isUserChoice) {
+                        element.classList.add(isCorrectAnswer ? 'correct' : 'wrong');
                     }
                 });
             });
